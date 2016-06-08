@@ -8,7 +8,7 @@ module.exports = {
    *      - pageNumber  The page number in the PDF Document
    *      - viewport    The PDFPage.getViewport data
    *      - textContent The PDFPage.getTextContent data
-   * @return void
+   * @return {Promise} Fulfilled once rendering has completed
    */
   render: function (options) {
     var textLayerFactory = new PDFJS.DefaultTextLayerFactory();
@@ -16,8 +16,15 @@ module.exports = {
     textLayerBuilder.setTextContent(options.textContent);
     textLayerBuilder.render();
 
-    setTimeout(function () {
-      mergeAdjacentText(options.container);
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        try {
+          mergeAdjacentText(options.container);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      });
     });
   }
 };
